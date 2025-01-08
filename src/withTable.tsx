@@ -1,23 +1,34 @@
 import React from 'react';
+import {
+  TableOptions,
+  SortConfig,
+  Filters,
+  TableData,
+  TableProps,
+  EnhancedTableProps
+} from './types';
 
-const withTable = (WrappedComponent, options = {}) => {
+const withTable = <P extends TableProps>(
+  WrappedComponent: React.ComponentType<P & EnhancedTableProps>,
+  options: TableOptions = {}
+) => {
   const {
     sortable = true,
     filterable = true,
     pageable = true,
   } = options;
 
-  return function TableHOC(props) {
-    const [data, setData] = React.useState(props.data || []);
-    const [sortConfig, setSortConfig] = React.useState(null);
-    const [filters, setFilters] = React.useState({});
+  return function TableHOC(props: P) {
+    const [data, setData] = React.useState<TableData[]>(props.data || []);
+    const [sortConfig, setSortConfig] = React.useState<SortConfig | null>(null);
+    const [filters, setFilters] = React.useState<Filters>({});
     const [currentPage, setCurrentPage] = React.useState(1);
     const [itemsPerPage, setItemsPerPage] = React.useState(10);
 
-    const sortData = React.useCallback((field) => {
+    const sortData = React.useCallback((field: string) => {
       if (!sortable) return;
 
-      let direction = 'asc';
+      let direction: 'asc' | 'desc' = 'asc';
       if (sortConfig && sortConfig.field === field && sortConfig.direction === 'asc') {
         direction = 'desc';
       }
@@ -32,7 +43,7 @@ const withTable = (WrappedComponent, options = {}) => {
       setSortConfig({ field, direction });
     }, [data, sortConfig, sortable]);
 
-    const filterData = React.useCallback((field, value) => {
+    const filterData = React.useCallback((field: string, value: string) => {
       if (!filterable) return;
 
       const newFilters = { ...filters, [field]: value };
@@ -49,7 +60,7 @@ const withTable = (WrappedComponent, options = {}) => {
       setCurrentPage(1);
     }, [filters, props.data, filterable]);
 
-    const changePage = React.useCallback((page) => {
+    const changePage = React.useCallback((page: number) => {
       if (!pageable) return;
       setCurrentPage(page);
     }, [pageable]);
@@ -62,7 +73,7 @@ const withTable = (WrappedComponent, options = {}) => {
       return data.slice(startIndex, endIndex);
     }, [data, currentPage, itemsPerPage, pageable]);
 
-    const tableProps = {
+    const tableProps: EnhancedTableProps = {
       data: getPaginatedData(),
       totalItems: data.length,
       currentPage,

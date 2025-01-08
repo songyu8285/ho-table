@@ -1,14 +1,22 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import withTable from '../withTable';
+import { TableData, EnhancedTableProps } from '../types';
 
-const mockData = [
+const mockData: TableData[] = [
   { id: 1, name: 'John', age: 25 },
   { id: 2, name: 'Alice', age: 30 },
   { id: 3, name: 'Bob', age: 20 },
 ];
 
-const TestComponent = ({ data, onSort, onFilter, onPageChange }) => (
+interface TestComponentProps extends EnhancedTableProps {
+  data: TableData[];
+  onSort: (field: string) => void;
+  onFilter: (field: string, value: string) => void;
+  onPageChange: (page: number) => void;
+}
+
+const TestComponent: React.FC<TestComponentProps> = ({ data, onSort, onFilter, onPageChange }) => (
   <div>
     <table>
       <thead>
