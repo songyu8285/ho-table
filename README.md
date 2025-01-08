@@ -1,2 +1,2 @@
 # ho-table
-React high order table
+React high order table, by AI
