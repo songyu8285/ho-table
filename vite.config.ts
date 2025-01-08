@@ -10,7 +10,7 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
-  build: {
+  build: process.env.BUILD_LIB ? {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'HoTable',
@@ -26,5 +26,5 @@ export default defineConfig({
         },
       },
     },
-  },
+  } : undefined,
 });
